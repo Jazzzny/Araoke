@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <ul>
+        {% for result in results %}
+        <li>
+            <img src="{{ result.cover_art }}" alt="Cover Art">
+            <p>Track: {{ result.track_name }}</p>
+            <p>Artist: {{ result.artist_name }}</p>
+            <p>Genre: {{ result.track_genre }}</p>
+            <p>Release Date: {{ result.release_date }}</p>
+            <p>Length: {{ result.track_length }} ms</p>
+            <p>Explicit: {{ result.is_explicit }}</p>
+            <p>id: {{ result.id }}</p>
+            <button onclick="selectTrack('{{result.id}}')">Select</button>
+        </li>
+        {% endfor %}
+    </ul>
+    <script>
+        function selectTrack(id) {
+
+
+            fetch('/select', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Track selected successfully!');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
