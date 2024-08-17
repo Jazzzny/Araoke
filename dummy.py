@@ -1,8 +1,8 @@
 from flask import Flask, request, render_template, jsonify
-import searchsupport
+import search_support
 
 app = Flask(__name__)
-music_search = searchsupport.MusicSearch()
+music_search = search_support.MusicSearch()
 
 @app.route('/')
 def search_page():
