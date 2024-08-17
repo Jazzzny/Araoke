@@ -6,13 +6,9 @@ class MusicSearch:
         self.limit = limit
         self.explicit = explicit
 
-    def search_tracks_api(self, term):
-        response = requests.get(f"https://itunes.apple.com/search?term={term}&entity=song&country={self.country}&limit={self.limit}&explicit={self.explicit}")
+    def search_tracks_itunes(self, term):
+        results = requests.get(f"https://itunes.apple.com/search?term={term}&entity=song&country={self.country}&limit={self.limit}&explicit={self.explicit}").json()
 
-        return response.json()
-
-    def search_tracks(self, term):
-        results = self.search_tracks_api(term)
         tracks = []
 
         for result in results['results']:
@@ -23,7 +19,7 @@ class MusicSearch:
                 'track_genre': result['primaryGenreName'],
                 'relase_date': result['releaseDate'],
                 'track_length': result['trackTimeMillis'],
-                'cover_art': result['artworkUrl100'],
+                'cover_art': result['artworkUrl100'].replace('100x100bb', '1024x1024bb'),
                 'id': result['trackId']
             }
 
@@ -42,16 +38,8 @@ class MusicSearch:
             'track_genre': result['primaryGenreName'],
             'relase_date': result['releaseDate'],
             'track_length': result['trackTimeMillis'],
-            'cover_art': result['artworkUrl100'],
+            'cover_art': result['artworkUrl100'].replace('100x100bb', '1024x1024bb'),
             'id': result['trackId']
         }
 
         return track
-
-def main():
-    search = MusicSearch()
-    results = search.search_tracks('Spoons Romantic Traffic')
-    print(results)
-
-if __name__ == '__main__':
-    main()
