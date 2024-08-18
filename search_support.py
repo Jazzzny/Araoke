@@ -15,7 +15,7 @@ class MusicSearch:
             track = {
                 'track_name': result['trackName'],
                 'artist_name': result['artistName'],
-                'is_explicit': True if result['trackExplicitness'] == 'explicit' else False,
+                'is_explicit': "True" if result['trackExplicitness'] == 'explicit' else "False",
                 'track_genre': result['primaryGenreName'],
                 'relase_date': result['releaseDate'],
                 'track_length': result['trackTimeMillis'],
@@ -34,7 +34,7 @@ class MusicSearch:
         track = {
             'track_name': result['trackName'],
             'artist_name': result['artistName'],
-            'is_explicit': True if result['trackExplicitness'] == 'explicit' else False,
+            'is_explicit': "True" if result['trackExplicitness'] == 'explicit' else "False",
             'track_genre': result['primaryGenreName'],
             'relase_date': result['releaseDate'],
             'track_length': result['trackTimeMillis'],

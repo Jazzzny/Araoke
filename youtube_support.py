@@ -1,9 +1,6 @@
 import yt_dlp
 import youtube_search
-import search_support
 import json
-import music_isolation
-import lyrics_support
 
 class DownloadAudio:
     def __init__(self):
@@ -36,18 +33,3 @@ class SearchYoutube:
         results.sort(key=lambda x: abs(x["duration"] - song_data["track_length"]))
 
         return results
-
-search = search_support.MusicSearch()
-
-itunes_results = search.search_tracks_itunes('Things Can Only Get Better Howard Jones')
-result = SearchYoutube().search(itunes_results[0])[0]
-
-downloader = DownloadAudio()
-
-downloader.download(f'youtube.com{result["url_suffix"]}', itunes_results[0]["id"])
-
-music_isolation = music_isolation.MusicIsolation()
-
-music_isolation.isolate(itunes_results[0]["id"])
-
-lyrics_support.LyricDownloader().get_lyrics(itunes_results[0])
