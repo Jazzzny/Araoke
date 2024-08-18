@@ -1,91 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>Araoke</title>
+    <style>
+        body {
+            font-family: "DM Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            background-color: #e6e2f1;
+            overflow: auto;
+        }
+
+        .column {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .column-middle {
+            flex: 2;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertically center the lyrics */
+        }
+
+        #lyrics {
+            font-size: 1.2em;
+            line-height: 1.2em; /* Reduce line height to decrease padding */
+            text-align: center; /* Center align the lyrics */
+        }
+
+        #cover_art {
+            width: 100%;
+            height: 40%;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .track-info p {
+            margin: 5px 0; /* Remove padding between track, artist, genre, and length */
+        }
+
+        .track-info #track_name {
+            font-size: 1.5em; /* Larger font size for track name */
+            font-weight: bold; /* Bold track name */
+        }
+
+        .track-info #artist_name {
+            font-size: 1.2em; /* Smaller than track name but larger than others */
+            font-weight: bold; /* Bold artist name */
+        }
+
+        .queue-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .queue-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .queue-item strong {
+            display: block;
+        }
+
+        #controls, #queue-form {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #674EA7;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "DM Sans", sans-serif;
+            width: 100%; /* Make all buttons the same width */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        button:hover {
+            background-color: #4B367C;
+        }
+
+        .circular-button {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 1.5em;
+            line-height: 2px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: calc(100% - 22px);
+            margin-right: 10px;
+        }
+
+        #queue_list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #queue_list li {
+            margin-bottom: 10px;
+        }
+
+        h2, h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            font-weight: normal;
+        }
+
+        .qr-code {
+            display: block;
+            margin: 0 auto;
+            width: 200px; /* Adjust the width as needed */
+            height: auto;
+        }
+
+        .qr-container {
+            text-align: center;
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+
+        .column h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .column h2 + ul {
+            margin-top: 0; /* Remove top margin from the queue list */
+        }
+    </style>
 </head>
 <body>
-    <h1>Araoke</h1>
-    <h2 id="lyric_1"></h2>
-    <h4 id="lyric_2"></h4>
-    <h4 id="lyric_3"></h4>
-    <h4 id="lyric_4"></h4>
-    <div>
-        <h2>Currently Playing:</h2>
-        <img id="cover_art" src="" alt="Cover Art" style="width:100px;height:100px;">
-        <p><strong>Track:</strong> <span id="track_name">None</span></p>
-        <p><strong>Artist:</strong> <span id="artist_name">None</span></p>
-        <p><strong>Genre:</strong> <span id="track_genre">None</span></p>
-        <p><strong>Release Date:</strong> <span id="release_date">None</span></p>
-        <p><strong>Length:</strong> <span id="track_length">0</span> seconds</p>
-    </div>
-    <button onclick="toggleTrack(0)">Toggle Bass</button>
-    <button onclick="toggleTrack(1)">Toggle Drums</button>
-    <button onclick="toggleTrack(2)">Toggle Other</button>
-    <button onclick="toggleTrack(3)">Toggle Vocals</button>
-    <button onclick="stopAudio()">Stop</button>
-    <button onclick="pauseAudio()">Pause</button>
-    <button onclick="unpauseAudio()">Unpause</button>
-    <button onclick="nextTrack()">Next Track</button>
+    <div class="container">
+        <div class="column">
+            <h2>Currently Playing:</h2>
+            <img id="cover_art" src="" alt="Cover Art">
+            <div class="track-info">
+                <p id="track_name">None</p>
+                <p id="artist_name">None</p>
+                <p><strong>Genre:</strong> <span id="track_genre">None</span></p>
+                <p><strong>Length:</strong> <span id="track_length">0:00</span></p>
+            </div>
+            <div id="controls">
+                <button onclick="toggleTrack(0)">Toggle Bass</button>
+                <button onclick="toggleTrack(1)">Toggle Drums</button>
+                <button onclick="toggleTrack(2)">Toggle Other</button>
+                <button onclick="toggleTrack(3)">Toggle Vocals</button>
+            </div>
+            <div class="button-container">
+                <button id="playPauseButton" class="circular-button" onclick="togglePlayPause()">⏸</button>
+                <button class="circular-button" onclick="nextTrack()">⏭</button>
+            </div>
+        </div>
 
-    <div>
-        <h2>Add Track to Queue:</h2>
-        <input type="text" id="track_id" placeholder="Enter Track ID">
-        <button onclick="addTrackToQueue()">Add Track</button>
-    </div>
+        <div class="column column-middle" id="lyrics">
+            <h3 id="lyric_1"></h3>
+            <h4 id="lyric_2"></h4>
+            <h4 id="lyric_3"></h4>
+            <h4 id="lyric_4"></h4>
+        </div>
 
+        <div class="column">
+            <div class="qr-container">
+                <h2>Add Songs at:</h2>
+                <img src="static/qr.png" alt="QR Code" class="qr-code">
+            </div>
+            <h2>Queue:</h2>
+            <ul id="queue_list">
+                <!-- Queue items will be added here -->
+            </ul>
+        </div>
+    </div>
 
     <script>
         function updateTrackInfo(track) {
             document.getElementById('track_name').textContent = track.track_name;
             document.getElementById('artist_name').textContent = track.artist_name;
             document.getElementById('track_genre').textContent = track.track_genre;
-            document.getElementById('release_date').textContent = track.release_date;
-            document.getElementById('track_length').textContent = (track.track_length / 1000).toFixed(0);
+            document.getElementById('track_length').textContent = formatTrackLength(track.track_length);
             document.getElementById('cover_art').src = track.cover_art;
         }
 
+        function formatTrackLength(lengthInMs) {
+            const totalSeconds = Math.floor(lengthInMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function displayLyrics(lyric1, lyric2, lyric3, lyric4) {
+            document.getElementById('lyric_4').textContent = lyric4;
+            document.getElementById('lyric_3').textContent = lyric3;
+            document.getElementById('lyric_2').textContent = lyric2;
+            document.getElementById('lyric_1').textContent = lyric1;
+        }
+
         function toggleTrack(index) {
-            window.pywebview.api.toggle_track(index).then(enabled => {
-                alert('Track ' + index + ' is now ' + (enabled[index] ? 'enabled' : 'disabled'));
-            });
+            window.pywebview.api.toggle_track(index);
         }
 
-        function stopAudio() {
-            window.pywebview.api.stop_audio().then(message => {
-                alert(message);
-            });
-        }
-
-        function pauseAudio() {
-            window.pywebview.api.pause_audio().then(message => {
-                alert(message);
-            });
-        }
-
-        function unpauseAudio() {
-            window.pywebview.api.unpause_audio().then(message => {
-                alert(message);
-            });
+        function togglePlayPause() {
+            const playPauseButton = document.getElementById('playPauseButton');
+            if (playPauseButton.innerHTML === '⏸') { // Pause symbol
+                window.pywebview.api.pause_audio().then(message => {
+                    playPauseButton.innerHTML = '▶'; // Play symbol
+                });
+            } else {
+                window.pywebview.api.unpause_audio().then(message => {
+                    playPauseButton.innerHTML = '⏸'; // Pause symbol
+                });
+            }
         }
 
         function nextTrack() {
-            window.pywebview.api.next_track().then(message => {
-                alert(message);
+            window.pywebview.api.next_track().then(() => {
+                updateQueue();
             });
         }
 
-        function addTrackToQueue() {
-            const trackId = document.getElementById('track_id').value;
-            window.pywebview.api.add_track_to_queue(trackId).then(message => {
-                alert(message);
+        function updateQueue() {
+        window.pywebview.api.get_queue().then(queue => {
+            const queueList = document.getElementById('queue_list');
+            queueList.innerHTML = ''; // Clear the existing queue items
+            queue.forEach(track => {
+                const listItem = document.createElement('li');
+                listItem.className = 'queue-item';
+                listItem.innerHTML = `
+                    <img src="${track.cover_art}" alt="Cover Art">
+                    <div>
+                        <strong>${track.track_name}</strong><br>
+                        by ${track.artist_name}
+                    </div>
+                `;
+                queueList.appendChild(listItem);
             });
-        }
+        }).catch(error => {
+            console.error('Error fetching queue:', error);
+        });
+    }
 
         // Initialize with the current track info when the page loads
         window.pywebview.api.get_current_track().then(track => {
             updateTrackInfo(track);
         });
+
+        // Update the queue display when the page loads
+        updateQueue();
     </script>
 </body>
 </html>

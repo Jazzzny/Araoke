@@ -1,5 +1,7 @@
 import os
 import json
+import qrcode
+import socket
 import music_isolation
 import lyrics_support
 import search_support
@@ -73,3 +75,16 @@ class AraokeAPI:
             f"separated/{song_id}/other.mp3",
             f"separated/{song_id}/vocals.mp3"
         ]
+
+    def make_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(f"http://{socket.gethostbyname(socket.gethostname())}")
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        img.save(f"static/qr.png")
