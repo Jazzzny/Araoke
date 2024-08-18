@@ -18,10 +18,3 @@ class MusicIsolation:
 
         for stem, source in separated.items():
             demucs.api.save_audio(source, f"separated/{itunes_id}/{stem}.mp3", samplerate=self.separator.samplerate)
-
-def main():
-    music_isolation = MusicIsolation()
-    music_isolation.isolate("696887557")
-
-if __name__ == "__main__":
-    main()

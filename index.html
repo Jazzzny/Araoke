@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Araoke</title>
+</head>
+<body>
+    <h1>Araoke</h1>
+    <h2 id="lyric_1"></h2>
+    <h4 id="lyric_2"></h4>
+    <h4 id="lyric_3"></h4>
+    <h4 id="lyric_4"></h4>
+    <div>
+        <h2>Currently Playing:</h2>
+        <img id="cover_art" src="" alt="Cover Art" style="width:100px;height:100px;">
+        <p><strong>Track:</strong> <span id="track_name">None</span></p>
+        <p><strong>Artist:</strong> <span id="artist_name">None</span></p>
+        <p><strong>Genre:</strong> <span id="track_genre">None</span></p>
+        <p><strong>Release Date:</strong> <span id="release_date">None</span></p>
+        <p><strong>Length:</strong> <span id="track_length">0</span> seconds</p>
+    </div>
+    <button onclick="toggleTrack(0)">Toggle Bass</button>
+    <button onclick="toggleTrack(1)">Toggle Drums</button>
+    <button onclick="toggleTrack(2)">Toggle Other</button>
+    <button onclick="toggleTrack(3)">Toggle Vocals</button>
+    <button onclick="stopAudio()">Stop</button>
+    <button onclick="pauseAudio()">Pause</button>
+    <button onclick="unpauseAudio()">Unpause</button>
+    <button onclick="nextTrack()">Next Track</button>
+
+    <div>
+        <h2>Add Track to Queue:</h2>
+        <input type="text" id="track_id" placeholder="Enter Track ID">
+        <button onclick="addTrackToQueue()">Add Track</button>
+    </div>
+
+
+    <script>
+        function updateTrackInfo(track) {
+            document.getElementById('track_name').textContent = track.track_name;
+            document.getElementById('artist_name').textContent = track.artist_name;
+            document.getElementById('track_genre').textContent = track.track_genre;
+            document.getElementById('release_date').textContent = track.release_date;
+            document.getElementById('track_length').textContent = (track.track_length / 1000).toFixed(0);
+            document.getElementById('cover_art').src = track.cover_art;
+        }
+
+        function toggleTrack(index) {
+            window.pywebview.api.toggle_track(index).then(enabled => {
+                alert('Track ' + index + ' is now ' + (enabled[index] ? 'enabled' : 'disabled'));
+            });
+        }
+
+        function stopAudio() {
+            window.pywebview.api.stop_audio().then(message => {
+                alert(message);
+            });
+        }
+
+        function pauseAudio() {
+            window.pywebview.api.pause_audio().then(message => {
+                alert(message);
+            });
+        }
+
+        function unpauseAudio() {
+            window.pywebview.api.unpause_audio().then(message => {
+                alert(message);
+            });
+        }
+
+        function nextTrack() {
+            window.pywebview.api.next_track().then(message => {
+                alert(message);
+            });
+        }
+
+        function addTrackToQueue() {
+            const trackId = document.getElementById('track_id').value;
+            window.pywebview.api.add_track_to_queue(trackId).then(message => {
+                alert(message);
+            });
+        }
+
+        // Initialize with the current track info when the page loads
+        window.pywebview.api.get_current_track().then(track => {
+            updateTrackInfo(track);
+        });
+    </script>
+</body>
+</html>

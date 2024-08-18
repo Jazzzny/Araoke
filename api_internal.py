@@ -4,11 +4,9 @@ import music_isolation
 import lyrics_support
 import search_support
 import youtube_support
-import logging
 
 class AraokeAPI:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
 
         self.music = music_isolation.MusicIsolation()
         self.lyrics = lyrics_support.LyricDownloader()
@@ -32,55 +30,46 @@ class AraokeAPI:
         # yay, we good
         return 1
 
-    def prepare_song(self, song_id):
-        logging.info(f"Preparing song {song_id}")
-        # get iTunes metadata
-        logging.info("Getting metadata")
-        song_data = self.search.id_to_track_info(song_id)
+    def prepare_song(self, song_data):
+        song_id = song_data["id"]
+
+        print(f"Preparing song {song_id}")
 
         # write the metadata to a json
-        logging.info("Writing metadata")
+        print("Writing metadata")
         with open(f"meta/{song_id}.json", "w") as f:
             f.write(json.dumps(song_data))
 
         # Find the song on YouTube
-        logging.info("Searching YouTube")
+        print("Searching YouTube")
         youtube_data = self.youtube_search.search(song_data)[0]
 
         # Download the audio from YouTube
-        logging.info("Downloading audio")
+        print("Downloading audio")
         self.downloader.download(f'youtube.com{youtube_data["url_suffix"]}', song_id)
 
         # Download lyrics
-        logging.info("Downloading lyrics")
+        print("Downloading lyrics")
         self.lyrics.get_lyrics(song_data)
 
         # Isolate the audio
-        logging.info("Isolating audio")
+        print("Isolating audio")
         self.music.isolate(song_id)
 
-        logging.info("Song prepared")
+        print("Song prepared")
         return 1
 
-    def get_song(self, song_id):
-        result = []
-
+    def get_song_data_cached(self, song_id):
         # read the metadata
         with open(f"meta/{song_id}.json", "r") as f:
             song_data = json.loads(f.read())
 
-        result.append(song_data)
+        return song_data
 
-        # add the paths to the separated tracks
-        result.append([
+    def get_separated_tracks(self, song_id):
+        return [
             f"separated/{song_id}/bass.mp3",
             f"separated/{song_id}/drums.mp3",
             f"separated/{song_id}/other.mp3",
             f"separated/{song_id}/vocals.mp3"
-        ])
-
-api = AraokeAPI()
-api.prepare_song("693751201")
-
-
-
+        ]
